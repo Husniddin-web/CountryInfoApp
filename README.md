@@ -1,99 +1,157 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Country Info & Calendar API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is a backend application built with Nest.js that provides information about countries and allows users to add public holidays to a personal calendar.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- Get a list of all available countries.
+- Get detailed information for a specific country, including bordering nations, historical population data, and the national flag.
+- Add national holidays for a given country and year to a user's calendar.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+- **Framework**: [Nest.js](https://nestjs.com/)
+- **Language**: TypeScript
+- **ODM**: [Mongoose](https://mongoosejs.com/)
+- **Database**: [MongoDB](https://www.mongodb.com/)
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/en/) (v18 or later recommended)
+- [NPM](https://www.npmjs.com/)
+- [Docker](https://www.docker.com/) (for running a MongoDB instance)
+
+### 1. Installation
+
+Clone the repository and install the dependencies:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone [https://github.com/your-username/country-info-app.git](https://github.com/your-username/country-info-app.git)
+cd country-info-app
+npm install
 ```
 
-## Run tests
+### 2. Configure Environment Variables
+
+Create a `.env` file in the root of the project by copying the example file:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
 ```
 
-## Deployment
+Open the `.env` file and update the `MONGODB_URI` with your MongoDB connection string.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+**Note**: The `.env` file is included in `.gitignore` and should never be committed to version control for security reasons.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 3. Set Up the Database
+
+You can use Docker to easily spin up a MongoDB instance:
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+docker run --name my-mongo -p 27017:27017 -d mongo
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The application will connect to this instance, and Mongoose will create the collection automatically on the first data insertion. No migrations are needed.
 
-## Resources
+### 4. Running the Application
 
-Check out a few resources that may come in handy when working with NestJS:
+To run the application in development mode with live-reloading:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+npm run start:dev
+```
 
-## Support
+The application will be available at `http://localhost:3000`.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
+## 📜 API Endpoints
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Countries
 
-## License
+#### `GET /countries`
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Returns a list of all available countries supported by the Nager API.
+
+**✅ Success Response (200 OK)**
+
+```json
+[
+    { "countryCode": "AD", "name": "Andorra" },
+    { "countryCode": "AL", "name": "Albania" },
+    ...
+]
+```
+
+#### `GET /countries/:countryCode`
+
+Returns aggregated information for a single country.
+
+**✅ Success Response (200 OK)** for `/countries/DE`
+
+```json
+{
+  "borders": [
+    { "name": "Austria", "countryCode": "AT" },
+    { "name": "Belgium", "countryCode": "BE" },
+    ...
+  ],
+  "population": [
+    { "year": 2018, "value": 82927922 },
+    { "year": 2017, "value": 82695000 },
+    ...
+  ],
+  "flag": "[https://flagcdn.com/w320/de.png](https://flagcdn.com/w320/de.png)"
+}
+```
+
+**❌ Error Response (404 Not Found)**
+
+```json
+{
+  "message": "Country with code 'XX' not found.",
+  "error": "Not Found",
+  "statusCode": 404
+}
+```
+
+### Calendar
+
+#### `POST /users/:userId/calendar/holidays`
+
+Adds national holidays of a specific country to the specified user's calendar. **Note**: `userId` is the MongoDB ObjectId string.
+
+**Request Body**
+
+```json
+{
+  "countryCode": "US",
+  "year": 2025,
+  "holidays": ["New Year's Day", "Independence Day"]
+}
+```
+
+_The `holidays` array is optional. If omitted, all public holidays for that year will be added._
+
+**✅ Success Response (201 Created)**
+
+```json
+{
+  "message": "Holidays added successfully.",
+  "savedCount": 2
+}
+```
+
+**❌ Error Response (400 Bad Request)** for invalid `countryCode`
+
+```json
+{
+  "message": ["countryCode must be a valid ISO31661 Alpha2 code"],
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```

@@ -1,26 +1,80 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCalendarDto } from './dto/create-calendar.dto';
-import { UpdateCalendarDto } from './dto/update-calendar.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+import { AddHolidaysDto } from './dto/add-holidays.dto';
+import {
+  HolidayEvent,
+  HolidayEventDocument,
+} from './schema/holiday-event.schema';
+import { config } from '../../config';
 
 @Injectable()
 export class CalendarService {
-  create(createCalendarDto: CreateCalendarDto) {
-    return 'This action adds a new calendar';
+  private readonly nagerApi: string;
+
+  constructor(
+    @InjectModel(HolidayEvent.name)
+    private holidayEventModel: Model<HolidayEventDocument>,
+    private readonly httpService: HttpService
+  ) {
+    this.nagerApi = config.apis.dateNagerBaseUrl;
   }
 
-  findAll() {
-    return `This action returns all calendar`;
-  }
+  async addHolidaysToCalendar(userId: string, dto: AddHolidaysDto) {
+    try {
+      const { data: allHolidays } = await firstValueFrom(
+        this.httpService.get(
+          `${this.nagerApi}/PublicHolidays/${dto.year}/${dto.countryCode}`
+        )
+      );
 
-  findOne(id: number) {
-    return `This action returns a #${id} calendar`;
-  }
+      let holidaysToSave = allHolidays;
 
-  update(id: number, updateCalendarDto: UpdateCalendarDto) {
-    return `This action updates a #${id} calendar`;
-  }
+      if (dto.holidays && dto.holidays.length > 0) {
+        const holidaySet = new Set(dto.holidays);
+        holidaysToSave = allHolidays.filter((holiday: HolidayEvent) =>
+          holidaySet.has(holiday.name)
+        );
+      }
 
-  remove(id: number) {
-    return `This action removes a #${id} calendar`;
+      if (!holidaysToSave || holidaysToSave.length === 0) {
+        return {
+          message: 'No holidays found or matched to save.',
+          savedCount: 0,
+        };
+      }
+
+      const holidayDocuments = holidaysToSave.map((holiday: HolidayEvent) => ({
+        userId: userId,
+        name: holiday.name,
+        date: new Date(holiday.date),
+        countryCode: holiday.countryCode,
+      }));
+
+      const result = await this.holidayEventModel.insertMany(holidayDocuments);
+
+      return {
+        message: 'Holidays added successfully.',
+        savedCount: result.length,
+      };
+    } catch (error) {
+      if (error.response?.status === 404) {
+        throw new HttpException(
+          {
+            message: `Country code '${dto.countryCode}' not found.`,
+          },
+          HttpStatus.NOT_FOUND
+        );
+      }
+      throw new HttpException(
+        {
+          message: 'Failed to fetch or save holidays.',
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }

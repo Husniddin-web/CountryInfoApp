@@ -1,34 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Param, ValidationPipe } from '@nestjs/common';
 import { CalendarService } from './calendar.service';
-import { CreateCalendarDto } from './dto/create-calendar.dto';
-import { UpdateCalendarDto } from './dto/update-calendar.dto';
+import { AddHolidaysDto } from './dto/add-holidays.dto';
+import {
+  ApiTags,
+  ApiParam,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 
-@Controller('calendar')
+@ApiTags('Calendar')
+@Controller('users/:userId/calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
-  @Post()
-  create(@Body() createCalendarDto: CreateCalendarDto) {
-    return this.calendarService.create(createCalendarDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.calendarService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.calendarService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCalendarDto: UpdateCalendarDto) {
-    return this.calendarService.update(+id, updateCalendarDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.calendarService.remove(+id);
+  @Post('holidays')
+  @ApiOperation({ summary: 'Add national holidays to user calendar' })
+  @ApiParam({
+    name: 'userId',
+    type: String,
+    description: 'User ID to add holidays for',
+    example: '12345',
+  })
+  @ApiBody({ type: AddHolidaysDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Holidays successfully added to user calendar',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input (validation failed)',
+  })
+  async addHolidaysToCalendar(
+    @Param('userId') userId: string,
+    @Body(new ValidationPipe()) addHolidaysDto: AddHolidaysDto
+  ) {
+    return this.calendarService.addHolidaysToCalendar(userId, addHolidaysDto);
   }
 }
